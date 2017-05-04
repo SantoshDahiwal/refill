@@ -1,0 +1,13 @@
+flask == 0.12.1
+flask_restplus == 0.10.1
+Flask_Cors == 3.0.2
+
+celery == 4.0.2
+redis == 2.10.5
+dateparser == 0.6.0
+mwparserfromhell == 0.4.4
+beautifulsoup4 == 4.5.3
+pywikibot == 3.0.20170403
+babel == 2.4.0
+requests == 2.13.0
+furl == 1.0.0
