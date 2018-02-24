@@ -1,81 +1,92 @@
 <template>
-  <div class="main-content">
-    <h1>{{ msg('appname') }}<sup class="ng">&alpha;</sup></h1>
-    <h2 class="tagline">{{ msg('tagline') }}</h2>
-    <md-card class="md-accent">
-      <md-card-header>
-        <div class="md-title">Here be dragons</div>
-      </md-card-header>
-      <md-card-content>
-        <p>This is an unreleased version of reFill which may have numerous bugs and other oddities. Be sure to check every edit before saving.</p>
-      </md-card-content>
-      <md-card-actions>
-        <md-button href="https://tools.wmflabs.org/refill">Return to stable version</md-button>
-      </md-card-actions>
-    </md-card>
+  <div>
+    <v-container fluid grid-list-lg>
+      <v-layout row wrap>
+        <v-flex xs12>
+          <h1>{{ msg('appname') }}<sup class="ng">&alpha;</sup></h1>
+          <h2 class="tagline">{{ msg('tagline') }}</h2>
+        </v-flex>
+      </v-layout>
+      <v-layout row wrap>
+        <v-flex xs12>
+          <v-card>
+            <v-card-title primary-title>
+              <div class="headline">Here be dragons</div>
+            </v-card-title>
+            <v-card-text>
+              <p>This is an unreleased version of reFill which may have numerous bugs and other oddities. Be sure to check every edit before saving.</p>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn flat href="https://tools.wmflabs.org/refill">Return to stable version</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
+      </v-layout>
 
-    <md-card>
-      <md-card-header>
-        <div class="md-title">{{ msg('fixwikipage') }}</div>
-      </md-card-header>
-      <md-card-content>
-        <form class="wikipage-form" @submit="fixWikipage" v-on:submit.prevent>
-          <md-input-container class="page">
-            <label>{{ msg('fixwikipage-page') }}</label>
-            <md-input required v-model="page"></md-input>
-          </md-input-container>
-          <md-input-container class="code">
-            <label>{{ msg('fixwikipage-code') }}</label>
-            <md-input v-model="code"></md-input>
-          </md-input-container>
-          <md-input-container class="fam">
-            <label>{{ msg('fixwikipage-fam') }}</label>
-            <md-input v-model="fam"></md-input>
-          </md-input-container>
-          <md-button type="submit" class="md-primary md-fab">
-            <md-icon>arrow_forward</md-icon>
-          </md-button>
-        </form>
-      </md-card-content>
-    </md-card>
+      <v-layout row wrap>
+        <v-flex xs12>
+          <v-card>
+            <v-card-title primary-title>
+              <div class="headline">{{ msg('fixwikipage') }}</div>
+            </v-card-title>
+            <v-card-text>
+              <div class="wikipage-form">
+                <v-text-field
+                  v-model="page"
+                  class="page"
+                  placeholder=""
+                  :label="msg('fixwikipage-page')"
+                ></v-text-field>
+                <v-text-field
+                  v-model="code"
+                  class="code"
+                  :label="msg('fixwikipage-code')"
+                ></v-text-field>
+                <v-text-field
+                  v-model="fam"
+                  class="fam"
+                  :label="msg('fixwikipage-fam')"
+                ></v-text-field>
 
-    <md-card>
-      <md-card-header>
-        <div class="md-title">{{ msg('fixwikicode') }}</div>
-      </md-card-header>
-      <md-card-content>
-        <md-input-container>
-          <label>{{ msg('fixwikicode-wikicode') }}</label>
-          <md-textarea required v-model="wikicode"></md-textarea>
-        </md-input-container>
-      </md-card-content>
-      <md-card-actions>
-        <md-button @click.native="fixWikicode">{{ msg('fixwikicode-submit') }}</md-button>
-      </md-card-actions>
-    </md-card>
+                <v-btn fab @click="fixWikipage">
+                  <v-icon>arrow_forward</v-icon>
+                </v-btn>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
 
-    <md-card>
-      <md-card-header>
-      </md-card-header>
-      <md-card-expand>
-        <md-card-actions>
-          <span style="flex: 1"></span>
-          <md-button class="md-icon-button" md-expand-trigger>
-            <md-icon>settings</md-icon>
-          </md-button>
-        </md-card-actions>
-        <md-card-content>
-          <md-input-container>
-            <label>{{ msg('apiendpoint') }}</label>
-            <md-input v-model="api" required></md-input>
-          </md-input-container>
-        </md-card-content>
-      </md-card-expand>
-    </md-card>
+      <v-layout>
+        <v-flex xs12>
+          <v-card>
+            <v-card-title>
+              <div class="headline">{{ msg('fixwikicode') }}</div>
+            </v-card-title>
+            <v-card-text>
+              <v-text-field
+                v-model="wikicode"
+                class="wikicode"
+                :label="msg('fixwikicode-wikicode')"
+                textarea
+              ></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn flat @click="fixWikicode">
+                {{ msg('fixwikicode-submit') }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
 
-    <md-snackbar ref="taskerror">
+    <v-snackbar
+      ref="taskerror"
+      v-model="showError"
+    >
       <span>{{ error }}</span>
-    </md-snackbar>
+    </v-snackbar>
   </div>
 </template>
 <script>
@@ -86,7 +97,8 @@ export default {
       code: 'en',
       page: '',
       wikicode: '<ref>http://example.com</ref>',
-      error: ''
+      error: '',
+      showError: false,
     }
   },
   created () {
@@ -112,7 +124,7 @@ export default {
         }
       }, response => {
         this.error = response.data.message;
-        this.$refs.taskerror.open();
+        this.showError = true;
       });
     }
   }

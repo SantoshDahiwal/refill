@@ -13,15 +13,17 @@ function requireAll(r) { r.keys().forEach(r); }
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
-import VueMaterial from 'vue-material';
-import 'vue-material/dist/vue-material.css';
-Vue.use(VueMaterial);
+import Vuetify from 'vuetify';
+import 'vuetify/dist/vuetify.min.css';
+Vue.use(Vuetify);
+/*
 Vue.material.registerTheme('default', {
   primary: 'blue',
   accent: 'indigo',
   warn: 'red',
   background: 'white'
 });
+*/
 
 import VueResource from 'vue-resource';
 Vue.use(VueResource);

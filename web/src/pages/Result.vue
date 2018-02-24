@@ -1,52 +1,60 @@
 <template>
-  <div class="main-content">
+  <div>
     <h1>{{ msg('result') }}</h1>
-    <md-card class="progress-card">
-      <md-card-content>
+
+    <v-card class="progress-card">
+      <v-card-text>
         <div class="icon-wrapper">
-          <md-spinner :md-size="50" v-if="!loaded || running" md-indeterminate class="icon md-accent"></md-spinner>
-          <md-icon v-else-if="state == 'PENDING'" class="icon">hourglass_empty</md-icon>
-          <md-icon v-else-if="state == 'SUCCESS'" class="icon successful">done</md-icon>
-          <md-icon v-else-if="state == 'FAILURE'" class="icon unsuccessful">error</md-icon>
-          <md-icon v-else-if="state == 'REVOKED'" class="icon unsuccessful">cancel</md-icon>
-          <md-icon v-else-if="state == 'BACKEND_ERROR'" class="icon unsuccessful">cloud_off</md-icon>
-          <md-icon v-else class="icon">help</md-icon>
+          <v-progress-circular
+            indeterminate
+            color="primary"
+            v-if="!loaded || running"
+          ></v-progress-circular>
+          <v-icon v-else-if="state == 'PENDING'">hourglass_empty</v-icon>
+          <v-icon v-else-if="state == 'SUCCESS'" class="successful">done</v-icon>
+          <v-icon v-else-if="state == 'FAILURE'" class="unsuccessful">error</v-icon>
+          <v-icon v-else-if="state == 'REVOKED'" class="unsuccessful">cancel</v-icon>
+          <v-icon v-else-if="state == 'BACKEND_ERROR'" class="unsuccessful">cloud_off</v-icon>
+          <v-icon v-else>help</v-icon>
         </div>
         <div v-if="loaded" class="progress-wrapper">
           {{ msg('state-' + state) }}
           <div v-if="state != 'SUCCESS'" class="progress-description">{{ msg('state-' + state + '-description') }}</div>
         </div>
-      </md-card-content>
-      <md-progress v-if="loaded" :md-progress="stepPercentage * 100"></md-progress>
-    </md-card>
+      </v-card-text>
+      <v-progress-linear v-if="loaded" v-model="progressBar"></v-progress-linear>
+    </v-card>
+
     <div v-if="loaded">
       <div ref="diff" v-if="origWikicode && wikicode" v-html="diff">
       </div>
-      <md-input-container>
-        <md-textarea v-model="wikicode"></md-textarea>
-      </md-input-container>
+      <v-text-field
+        v-model="wikicode"
+        textarea
+      ></v-text-field>
 
-      <md-card v-if="errors.length > 0">
-        <md-card-content>
+      <v-card v-if="errors.length > 0">
+        <v-card-text>
           {{ msg('errorlist') }}
           <ul>
             <li v-for="error in errors">
               {{ error }}
             </li>
           </ul>
-        </md-card-content>
-      </md-card>
+        </v-card-text>
+      </v-card>
 
-      <md-card class="action-card">
-        <md-card-expand>
-          <md-card-actions>
-            <span class="tip">{{ msg('chancetoreview') }}</span>
-            <md-button class="md-primary md-raised" @click.native="savePage" :disabled="!wikiAction">{{ msg('previewandsave') }}</md-button>
-            <md-button class="md-icon-button" md-expand-trigger>
-              <md-icon>keyboard_arrow_down</md-icon>
-            </md-button>
-          </md-card-actions>
-          <md-card-content>
+      <v-card class="action-card">
+        <v-card-actions>
+          <span class="tip">{{ msg('chancetoreview') }}</span>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click.native="savePage" :disabled="!wikiAction">{{ msg('previewandsave') }}</v-btn>
+          <v-btn icon @click="showTaskInfo = !showTaskInfo">
+            <v-icon>keyboard_arrow_down</v-icon>
+          </v-btn>
+        </v-card-actions>
+        <v-slide-y-transition>
+          <v-card-text v-show="showTaskInfo">
             <h2>{{ msg('taskinfo') }}</h2>
             <ul>
               <li>{{ msg('taskinfo-name') }}: {{ taskName }}</li>
@@ -56,9 +64,9 @@
               <li>{{ msg('taskinfo-running') }}: {{ running }}</li>
               <li>{{ msg('taskinfo-submiturl') }}: {{ wikiAction }}</li>
             </ul>
-          </md-card-content>
-        </md-card-expand>
-      </md-card>
+          </v-card-text>
+        </v-slide-y-transition>
+      </v-card>
     </div>
     <form class="fake-editform" ref="form" name="editform" method="post" v-bind:action="wikiAction">
       <textarea type="hidden" name="wpTextbox1">{{ wikicode }}</textarea>
@@ -96,7 +104,13 @@ export default {
       startTime: '',
       editTime: '',
       wikiAction: '',
+      showTaskInfo: false,
     }
+  },
+  computed: {
+    progressBar() {
+      return this.stepPercentage * 100;
+    },
   },
   created () {
     this.fetchData();
